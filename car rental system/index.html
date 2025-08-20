@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Car Rental System – Demo (HTML/CSS/JS + Bootstrap)</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background: #f7f7fb; }
+    .navbar-brand span { font-weight:700; color:#0d6efd; }
+    .card-img-top{ height:180px; object-fit:cover; }
+    .pointer{ cursor:pointer; }
+    .nav-auth img { width: 28px; height: 28px; border-radius: 50%; }
+    .badge-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+    .section{ display:none; }
+    .section.active{ display:block; }
+    .empty-state{ padding:2rem; background:#fff; border-radius:0.75rem; text-align:center; border:1px dashed #ddd; }
+    footer{ color:#6c757d; }
+    .table-sm td, .table-sm th{ vertical-align:middle; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#home">🚗 <span>CarRental</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample" aria-controls="navbarsExample" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarsExample">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#bookings">My Bookings</a></li>
+          <li class="nav-item"><a class="nav-link" href="#admin">Admin</a></li>
+        </ul>
+        <ul class="navbar-nav ms-auto nav-auth">
+          <li class="nav-item me-2 d-none" id="navUser">
+            <span class="navbar-text small">Signed in as <strong id="navUserName"></strong></span>
+          </li>
+          <li class="nav-item"><a class="btn btn-outline-primary btn-sm me-2" id="btnLogin" href="#login">Login</a></li>
+          <li class="nav-item"><a class="btn btn-primary btn-sm" id="btnSignup" href="#signup">Sign up</a></li>
+          <li class="nav-item d-none"><button class="btn btn-outline-danger btn-sm" id="btnLogout">Logout</button></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container my-4">
+
+    <!-- HOME / SEARCH -->
+    <section id="home" class="section active">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-lg-3">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-control" id="searchLocation" placeholder="e.g., Hyderabad" />
+        </div>
+        <div class="col-6 col-lg-3">
+          <label class="form-label">Start date</label>
+          <input type="date" class="form-control" id="searchStart" />
+        </div>
+        <div class="col-6 col-lg-3">
+          <label class="form-label">End date</label>
+          <input type="date" class="form-control" id="searchEnd" />
+        </div>
+        <div class="col-6 col-lg-2">
+          <label class="form-label">Type</label>
+          <select class="form-select" id="searchType">
+            <option value="">Any</option>
+            <option>Sedan</option>
+            <option>SUV</option>
+            <option>Hatchback</option>
+            <option>Luxury</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-1 d-grid">
+          <button class="btn btn-primary" id="btnSearch">Search</button>
+        </div>
+      </div>
+
+      <hr class="my-4" />
+
+      <div id="carsGrid" class="row g-3"></div>
+      <div id="homeEmpty" class="empty-state mt-3 d-none">No cars match your search. Try different filters.</div>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="login" class="section">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Login</h4>
+              <form id="formLogin">
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" id="loginEmail" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input type="password" class="form-control" id="loginPassword" required />
+                </div>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-primary" type="submit">Sign in</button>
+                  <a class="btn btn-outline-secondary" href="#signup">Create an account</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNUP -->
+    <section id="signup" class="section">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Sign up</h4>
+              <form id="formSignup">
+                <div class="mb-3">
+                  <label class="form-label">Full name</label>
+                  <input type="text" class="form-control" id="signupName" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" id="signupEmail" required />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input type="password" class="form-control" id="signupPassword" minlength="6" required />
+                </div>
+                <div class="d-grid">
+                  <button class="btn btn-primary" type="submit">Create account</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY BOOKINGS -->
+    <section id="bookings" class="section">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h4 class="mb-0">My Bookings</h4>
+        <button class="btn btn-sm btn-outline-secondary" id="btnRefreshBookings">Refresh</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm table-striped align-middle" id="tblMyBookings">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Car</th>
+              <th>Dates</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="bookingsEmpty" class="empty-state d-none">No bookings yet. Go to <a href="#home">Home</a> to reserve a car.</div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="admin" class="section">
+      <div class="alert alert-info small">Default admin: <code>admin@demo.com</code> / <code>admin123</code></div>
+      <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabCars" type="button" role="tab">Cars</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBookings" type="button" role="tab">Bookings</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabUsers" type="button" role="tab">Users</button></li>
+      </ul>
+      <div class="tab-content border-start border-end border-bottom p-3 bg-white">
+        <!-- Cars -->
+        <div class="tab-pane fade show active" id="tabCars" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Cars</h5>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditCar" id="btnAddCar">Add Car</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle" id="tblCars">
+              <thead><tr><th>#</th><th>Name</th><th>Type</th><th>Location</th><th>Price/day</th><th>Seats</th><th>Trans.</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Bookings -->
+        <div class="tab-pane fade" id="tabBookings" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">All Bookings</h5>
+            <button class="btn btn-outline-secondary btn-sm" id="btnAdminRefreshBookings">Refresh</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle" id="tblAllBookings">
+              <thead><tr><th>#</th><th>User</th><th>Car</th><th>Dates</th><th>Total</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Users -->
+        <div class="tab-pane fade" id="tabUsers" role="tabpanel">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Users</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle" id="tblUsers">
+              <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="container py-4 small">
+    <div class="d-flex justify-content-between">
+      <span>© <span id="year"></span> CarRental Demo</span>
+      <span>Frontend-only demo (data in localStorage)</span>
+    </div>
+  </footer>
+
+  <!-- BOOK MODAL -->
+  <div class="modal fade" id="modalBook" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Book Car</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2"><strong id="bookCarName"></strong></div>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="form-label">Start date</label>
+              <input type="date" class="form-control" id="bookStart" />
+            </div>
+            <div class="col-6">
+              <label class="form-label">End date</label>
+              <input type="date" class="form-control" id="bookEnd" />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Days</label>
+              <input type="number" class="form-control" id="bookDays" readonly />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Total (₹)</label>
+              <input type="number" class="form-control" id="bookTotal" readonly />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btnConfirmBooking">Confirm Booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD/EDIT CAR MODAL -->
+  <div class="modal fade" id="modalEditCar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalCarTitle">Add Car</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formCar">
+            <input type="hidden" id="carId" />
+            <div class="mb-2"><label class="form-label">Name</label><input class="form-control" id="carName" required></div>
+            <div class="row g-2">
+              <div class="col-6"><label class="form-label">Type</label><select class="form-select" id="carType">
+                <option>Sedan</option><option>SUV</option><option>Hatchback</option><option>Luxury</option>
+              </select></div>
+              <div class="col-6"><label class="form-label">Location</label><input class="form-control" id="carLocation" required></div>
+            </div>
+            <div class="row g-2 mt-1">
+              <div class="col-6"><label class="form-label">Price/day (₹)</label><input type="number" class="form-control" id="carPrice" min="1" required></div>
+              <div class="col-3"><label class="form-label">Seats</label><input type="number" class="form-control" id="carSeats" min="2" value="5"></div>
+              <div class="col-3"><label class="form-label">Trans.</label><select class="form-select" id="carTrans"><option>Auto</option><option>Manual</option></select></div>
+            </div>
+            <div class="mt-2"><label class="form-label">Image URL</label><input class="form-control" id="carImg" placeholder="https://..." ></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="btnSaveCar">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ===== Utilities =====
+    const $ = (sel) => document.querySelector(sel);
+    const $all = (sel) => Array.from(document.querySelectorAll(sel));
+    const todayStr = () => new Date().toISOString().slice(0,10);
+    const daysBetween = (s, e) => {
+      const start = new Date(s), end = new Date(e);
+      const diff = Math.round((end - start) / (1000*60*60*24)) + 1; // inclusive
+      return isNaN(diff) ? 0 : diff;
+    };
+    const overlaps = (aStart, aEnd, bStart, bEnd) => {
+      if (!aStart || !aEnd || !bStart || !bEnd) return false;
+      return new Date(aStart) <= new Date(bEnd) && new Date(bStart) <= new Date(aEnd);
+    };
+
+    // ===== LocalStorage DAO =====
+    const LS = {
+      get(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
+      set(key, val){ localStorage.setItem(key, JSON.stringify(val)); },
+    };
+
+    // ===== Seed data =====
+    function seed(){
+      if (!LS.get('users')){
+        LS.set('users',[{name:'Admin', email:'admin@demo.com', password:'admin123', role:'admin'}]);
+      }
+      if (!LS.get('cars')){
+        LS.set('cars',[
+          {id:1,name:'Toyota Camry',type:'Sedan',location:'Hyderabad',price:2500,seats:5,trans:'Auto',img:'https://images.unsplash.com/photo-1549924231-f129b911e442?q=80&w=1200&auto=format&fit=crop'},
+          {id:2,name:'Honda CR-V',type:'SUV',location:'Chennai',price:3200,seats:5,trans:'Auto',img:'https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=1200&auto=format&fit=crop'},
+          {id:3,name:'Maruti Swift',type:'Hatchback',location:'Hyderabad',price:1500,seats:5,trans:'Manual',img:'https://images.unsplash.com/photo-1550355291-bbee04a92027?q=80&w=1200&auto=format&fit=crop'},
+          {id:4,name:'BMW 5 Series',type:'Luxury',location:'Bengaluru',price:7500,seats:5,trans:'Auto',img:'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop'}
+        ]);
+      }
+      if (!LS.get('bookings')) LS.set('bookings',[]);
+      if (!LS.get('session')) LS.set('session', null);
+    }
+
+    // ===== Session/Auth =====
+    function currentUser(){ return LS.get('session', null); }
+    function signIn(email, password){
+      const users = LS.get('users', []);
+      const u = users.find(x => x.email.toLowerCase() === email.toLowerCase() && x.password === password);
+      if (u){ LS.set('session', {email:u.email, name:u.name, role:u.role}); return u; }
+      return null;
+    }
+    function signUp(name,email,password){
+      const users = LS.get('users', []);
+      if (users.some(u => u.email.toLowerCase()===email.toLowerCase())) throw new Error('Email already registered');
+      users.push({name,email,password,role:'user'});
+      LS.set('users', users);
+      LS.set('session', {email, name, role:'user'});
+    }
+    function signOut(){ LS.set('session', null); }
+
+    // ===== Cars =====
+    function listCars(){ return LS.get('cars', []); }
+    function saveCar(car){
+      const cars = listCars();
+      if (car.id){
+        const idx = cars.findIndex(c=>c.id===car.id);
+        if (idx>-1) cars[idx]=car;
+      } else {
+        car.id = (cars.reduce((m,c)=>Math.max(m,c.id),0) || 0) + 1;
+        cars.push(car);
+      }
+      LS.set('cars', cars);
+    }
+    function deleteCar(id){ LS.set('cars', listCars().filter(c=>c.id!==id)); }
+
+    // ===== Bookings =====
+    function listBookings(){ return LS.get('bookings', []); }
+    function listBookingsByCar(carId){ return listBookings().filter(b=>b.carId===carId); }
+    function listBookingsByUser(email){ return listBookings().filter(b=>b.userEmail===email); }
+    function addBooking(b){ const all = listBookings(); b.id = (all.reduce((m,c)=>Math.max(m,c.id),0)||0)+1; all.push(b); LS.set('bookings', all); }
+    function cancelBooking(id){ const all = listBookings(); const idx = all.findIndex(b=>b.id===id); if(idx>-1){ all[idx].status='Cancelled'; LS.set('bookings', all);} }
+
+    // Availability check for a car in a range
+    function isCarAvailable(carId, start, end){
+      const bookings = listBookingsByCar(carId).filter(b=>b.status!=='Cancelled');
+      return !bookings.some(b=>overlaps(b.startDate, b.endDate, start, end));
+    }
+
+    // ===== UI: Navbar / Routing =====
+    function updateAuthUI(){
+      const u = currentUser();
+      $('#navUser').classList.toggle('d-none', !u);
+      $('#btnLogin').classList.toggle('d-none', !!u);
+      $('#btnSignup').classList.toggle('d-none', !!u);
+      $('#btnLogout').parentElement.classList.toggle('d-none', !u);
+      $('#navUserName').textContent = u ? (u.name || u.email) : '';
+    }
+
+    function go(hash){
+      if (!hash) hash = '#home';
+      $all('.section').forEach(sec=>sec.classList.remove('active'));
+      const el = document.querySelector(hash);
+      if (el){ el.classList.add('active'); }
+      if (hash==='#home') renderHome();
+      if (hash==='#bookings') renderMyBookings();
+      if (hash==='#admin') renderAdmin();
+    }
+
+    window.addEventListener('hashchange', ()=> go(location.hash));
+
+    // ===== Render: Home/Search =====
+    function card(car){
+      return `
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+          <img class="card-img-top" src="${car.img || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200'}" alt="${car.name}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">${car.name}</h5>
+            <p class="mb-1">Type: ${car.type} • ${car.trans} • ${car.seats} seats</p>
+            <p class="text-muted small mb-2">Location: ${car.location}</p>
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">₹${car.price}/day</span>
+              <button class="btn btn-primary btn-sm" data-car='${JSON.stringify(car)}' onclick='openBook(this)'>Book</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function renderHome(){
+      const loc = $('#searchLocation').value.trim().toLowerCase();
+      const type = $('#searchType').value;
+      const s = $('#searchStart').value; const e = $('#searchEnd').value;
+      const cars = listCars();
+      let filtered = cars.filter(c => (!loc || c.location.toLowerCase().includes(loc)) && (!type || c.type===type));
+      if (s && e){ filtered = filtered.filter(c => isCarAvailable(c.id, s, e)); }
+      $('#carsGrid').innerHTML = filtered.map(card).join('');
+      $('#homeEmpty').classList.toggle('d-none', filtered.length>0);
+    }
+
+    $('#btnSearch').addEventListener('click', renderHome);
+
+    // ===== Booking Modal =====
+    let bookCtx = {car:null};
+    function openBook(btn){
+      const u = currentUser();
+      if (!u){
+        alert('Please login to book a car.');
+        location.hash = '#login';
+        return;
+      }
+      const car = JSON.parse(btn.getAttribute('data-car'));
+      bookCtx.car = car;
+      $('#bookCarName').textContent = `${car.name} — ₹${car.price}/day`;
+      const sIn = $('#searchStart').value || todayStr();
+      const eIn = $('#searchEnd').value || todayStr();
+      $('#bookStart').value = sIn;
+      $('#bookEnd').value = eIn;
+      recalcBooking();
+      const modal = new bootstrap.Modal($('#modalBook'));
+      modal.show();
+    }
+
+    function recalcBooking(){
+      const s = $('#bookStart').value; const e = $('#bookEnd').value;
+      const d = daysBetween(s,e);
+      $('#bookDays').value = d>0? d : '';
+      $('#bookTotal').value = d>0 && bookCtx.car ? d * Number(bookCtx.car.price) : '';
+    }
+
+    $('#bookStart').addEventListener('change', recalcBooking);
+    $('#bookEnd').addEventListener('change', recalcBooking);
+
+    $('#btnConfirmBooking').addEventListener('click', ()=>{
+      const u = currentUser();
+      if (!u) return alert('Please login first');
+      const s = $('#bookStart').value, e = $('#bookEnd').value;
+      if (!s || !e) return alert('Select start and end dates');
+      if (new Date(e) < new Date(s)) return alert('End date must be after start date');
+      const car = bookCtx.car;
+      if (!isCarAvailable(car.id, s, e)) return alert('This car is not available for the selected dates.');
+      const total = Number($('#bookTotal').value || 0);
+      addBooking({carId:car.id, userEmail:u.email, startDate:s, endDate:e, total, status:'Confirmed'});
+      bootstrap.Modal.getInstance($('#modalBook')).hide();
+      alert('Booking confirmed!');
+      renderHome();
+    });
+
+    // ===== My Bookings =====
+    function renderMyBookings(){
+      const u = currentUser();
+      const tbody = $('#tblMyBookings tbody');
+      if (!u){ tbody.innerHTML=''; $('#bookingsEmpty').classList.remove('d-none'); return; }
+      const rows = listBookingsByUser(u.email).sort((a,b)=>a.id-b.id).map((b,i)=>{
+        const car = listCars().find(c=>c.id===b.carId);
+        return `<tr>
+          <td>${i+1}</td>
+          <td>${car?car.name:'[Deleted car]'}<div class="small text-muted">${car?car.location:''}</div></td>
+          <td><div>${b.startDate} → ${b.endDate}</div><div class="small text-muted">${daysBetween(b.startDate,b.endDate)} day(s)</div></td>
+          <td>₹${b.total}</td>
+          <td><span class="badge ${b.status==='Cancelled'?'bg-secondary':'bg-success'}">${b.status}</span></td>
+          <td class="text-end">${b.status==='Cancelled'?'':`<button class="btn btn-outline-danger btn-sm" onclick="cancelBookingUI(${b.id})">Cancel</button>`}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = rows.join('');
+      $('#bookingsEmpty').classList.toggle('d-none', rows.length>0);
+    }
+
+    function cancelBookingUI(id){ if (confirm('Cancel this booking?')){ cancelBooking(id); renderMyBookings(); renderHome(); } }
+
+    // ===== Admin =====
+    function requireAdmin(){ const u=currentUser(); return u && u.role==='admin'; }
+
+    function renderAdmin(){
+      if (!requireAdmin()){
+        $('#admin').innerHTML = '<div class="empty-state">Admin access required. Please <a href="#login">login</a> as admin.</div>';
+        return;
+      }
+      // Cars
+      const cars = listCars();
+      const tbody = $('#tblCars tbody');
+      tbody.innerHTML = cars.map((c,i)=>`<tr>
+        <td>${i+1}</td><td>${c.name}</td><td>${c.type}</td><td>${c.location}</td><td>₹${c.price}</td><td>${c.seats}</td><td>${c.trans}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-outline-primary me-1" onclick='editCar(${c.id})'>Edit</button>
+          <button class="btn btn-sm btn-outline-danger" onclick='deleteCarUI(${c.id})'>Delete</button>
+        </td>
+      </tr>`).join('');
+
+      // All bookings
+      const all = listBookings();
+      const tbodyB = $('#tblAllBookings tbody');
+      tbodyB.innerHTML = all.map((b,i)=>{
+        const car = cars.find(c=>c.id===b.carId);
+        return `<tr>
+          <td>${i+1}</td><td>${b.userEmail}</td><td>${car?car.name:'[Deleted car]'}</td>
+          <td>${b.startDate} → ${b.endDate}</td><td>₹${b.total}</td>
+          <td><span class="badge ${b.status==='Cancelled'?'bg-secondary':'bg-success'}">${b.status}</span></td>
+          <td class="text-end">${b.status==='Cancelled'?'':`<button class="btn btn-sm btn-outline-danger" onclick="adminCancel(${b.id})">Cancel</button>`}</td>
+        </tr>`;
+      }).join('');
+
+      // Users
+      const users = LS.get('users', []);
+      const tbodyU = $('#tblUsers tbody');
+      tbodyU.innerHTML = users.map((u,i)=>`<tr>
+        <td>${i+1}</td><td>${u.name}</td><td>${u.email}</td><td><span class="badge ${u.role==='admin'?'bg-dark':'bg-primary'}">${u.role}</span></td>
+        <td class="text-end">${u.role==='admin'?'':`<button class='btn btn-sm btn-outline-danger' onclick='deleteUser("${u.email}")'>Delete</button>`}</td>
+      </tr>`).join('');
+    }
+
+    function adminCancel(id){ if(confirm('Cancel this booking?')){ cancelBooking(id); renderAdmin(); renderHome(); } }
+
+    // Add / Edit Car
+    $('#btnAddCar').addEventListener('click', ()=>{ if(!requireAdmin())return; $('#modalCarTitle').textContent='Add Car'; $('#carId').value=''; $('#carName').value=''; $('#carType').value='Sedan'; $('#carLocation').value=''; $('#carPrice').value=''; $('#carSeats').value='5'; $('#carTrans').value='Auto'; $('#carImg').value=''; });
+    function editCar(id){ if(!requireAdmin())return; const c=listCars().find(x=>x.id===id); if(!c)return; $('#modalCarTitle').textContent='Edit Car'; $('#carId').value=c.id; $('#carName').value=c.name; $('#carType').value=c.type; $('#carLocation').value=c.location; $('#carPrice').value=c.price; $('#carSeats').value=c.seats; $('#carTrans').value=c.trans; $('#carImg').value=c.img||''; const m=new bootstrap.Modal($('#modalEditCar')); m.show(); }
+    $('#btnSaveCar').addEventListener('click', ()=>{ if(!requireAdmin())return; const car={ id: Number($('#carId').value)||undefined, name: $('#carName').value.trim(), type:$('#carType').value, location:$('#carLocation').value.trim(), price:Number($('#carPrice').value), seats:Number($('#carSeats').value), trans:$('#carTrans').value, img:$('#carImg').value.trim()}; if(!car.name||!car.location||!car.price) return alert('Please fill required fields'); saveCar(car); bootstrap.Modal.getInstance($('#modalEditCar')).hide(); renderAdmin(); renderHome(); });
+    function deleteCarUI(id){ if(!requireAdmin())return; if(confirm('Delete this car?')){ deleteCar(id); renderAdmin(); renderHome(); } }
+
+    // Delete User (non-admin)
+    function deleteUser(email){ if(!requireAdmin())return; const users = LS.get('users', []); const idx = users.findIndex(u=>u.email===email); if(idx>-1){ users.splice(idx,1); LS.set('users', users); renderAdmin(); } }
+
+    // ===== Forms: Login / Signup =====
+    $('#formLogin').addEventListener('submit', (e)=>{ e.preventDefault(); const email=$('#loginEmail').value.trim(); const pwd=$('#loginPassword').value; const u=signIn(email,pwd); if(!u) return alert('Invalid credentials'); updateAuthUI(); location.hash = '#home'; });
+    $('#formSignup').addEventListener('submit', (e)=>{ e.preventDefault(); const name=$('#signupName').value.trim(); const email=$('#signupEmail').value.trim(); const pwd=$('#signupPassword').value; try{ signUp(name,email,pwd); updateAuthUI(); location.hash = '#home'; } catch(err){ alert(err.message); } });
+    $('#btnLogout').addEventListener('click', ()=>{ signOut(); updateAuthUI(); location.hash = '#home'; });
+
+    // ===== Init =====
+    seed();
+    updateAuthUI();
+    $('#year').textContent = new Date().getFullYear();
+    go(location.hash);
+  </script>
+</body>
+</html>
+
